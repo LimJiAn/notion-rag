@@ -5,27 +5,26 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jian1990/notion-rag/backend/internal/clients/gemini"
 	"github.com/jian1990/notion-rag/backend/internal/config"
-	"github.com/jian1990/notion-rag/backend/internal/embed"
-	"github.com/jian1990/notion-rag/backend/internal/generate"
-	"github.com/jian1990/notion-rag/backend/internal/models"
-	"github.com/jian1990/notion-rag/backend/internal/store"
+	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
+	"github.com/jian1990/notion-rag/backend/internal/repositories/documents"
 )
 
 type Service struct {
 	cfg      config.Config
-	store    *store.Store
-	embed    *embed.Client
-	generate *generate.Client
+	store    *documents.Store
+	embed    *gemini.EmbedClient
+	generate *gemini.GenerateClient
 }
 
 type Answer struct {
-	Question string                `json:"question"`
-	Answer   string                `json:"answer"`
-	Results  []models.SearchResult `json:"results"`
+	Question string                   `json:"question"`
+	Answer   string                   `json:"answer"`
+	Results  []knowledge.SearchResult `json:"results"`
 }
 
-func NewService(cfg config.Config, store *store.Store, embedClient *embed.Client, generateClient *generate.Client) *Service {
+func NewService(cfg config.Config, store *documents.Store, embedClient *gemini.EmbedClient, generateClient *gemini.GenerateClient) *Service {
 	return &Service{
 		cfg:      cfg,
 		store:    store,
@@ -45,8 +44,7 @@ func (s *Service) Ask(ctx context.Context, question string) (Answer, error) {
 		return Answer{}, err
 	}
 
-	prompt := buildPrompt(question, results)
-	answer, err := s.generate.Answer(ctx, prompt)
+	answer, err := s.generate.Answer(ctx, buildPrompt(question, results))
 	if err != nil {
 		return Answer{}, err
 	}
@@ -58,7 +56,7 @@ func (s *Service) Ask(ctx context.Context, question string) (Answer, error) {
 	}, nil
 }
 
-func buildPrompt(question string, results []models.SearchResult) string {
+func buildPrompt(question string, results []knowledge.SearchResult) string {
 	if len(results) == 0 {
 		return fmt.Sprintf("질문: %s\n\n관련 문맥이 없습니다. 지어내지 말고 정보가 부족하다고 답하세요.", question)
 	}

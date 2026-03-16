@@ -1,0 +1,174 @@
+basePath: /
+definitions:
+  httpapi.queryRequest:
+    properties:
+      question:
+        type: string
+    type: object
+  httpapi.updateSettingsRequest:
+    properties:
+      embedding_model:
+        type: string
+      gemini_api_key:
+        type: string
+      generation_model:
+        type: string
+      notion_root_page_ids:
+        type: string
+      notion_token:
+        type: string
+      notion_version:
+        type: string
+    type: object
+  settings.PublicValues:
+    properties:
+      embedding_model:
+        type: string
+      gemini_api_key_set:
+        type: boolean
+      generation_model:
+        type: string
+      notion_root_page_ids:
+        items:
+          type: string
+        type: array
+      notion_token_set:
+        type: boolean
+      notion_version:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: REST API for syncing Notion content, querying indexed knowledge, and
+    managing runtime settings.
+  title: Notion RAG API
+  version: 1.0.0
+paths:
+  /api/v1/query:
+    post:
+      consumes:
+      - application/json
+      description: Searches indexed Notion chunks and generates an answer
+      parameters:
+      - description: Question payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/httpapi.queryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "502":
+          description: Bad Gateway
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Query indexed knowledge
+      tags:
+      - rag
+  /api/v1/settings:
+    get:
+      description: Returns stored runtime settings metadata without exposing secret
+        values
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/settings.PublicValues'
+      summary: Get runtime settings
+      tags:
+      - settings
+    put:
+      consumes:
+      - application/json
+      description: Stores runtime settings in the backend data volume
+      parameters:
+      - description: Settings payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/httpapi.updateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update runtime settings
+      tags:
+      - settings
+  /api/v1/stats:
+    get:
+      description: Returns indexed document and last sync stats
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Index stats
+      tags:
+      - system
+  /api/v1/sync:
+    post:
+      description: Crawls Notion pages, chunks them, embeds them, and stores them
+        locally
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "502":
+          description: Bad Gateway
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Sync Notion content
+      tags:
+      - rag
+  /healthz:
+    get:
+      description: Returns the backend health state
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - system
+swagger: "2.0"

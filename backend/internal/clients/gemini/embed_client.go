@@ -1,4 +1,4 @@
-package embed
+package gemini
 
 import (
 	"bytes"
@@ -12,29 +12,27 @@ import (
 	"github.com/jian1990/notion-rag/backend/internal/settings"
 )
 
-type Client struct {
+type EmbedClient struct {
 	settings   *settings.Store
 	baseURL    string
 	httpClient *http.Client
 }
 
-func NewClient(settingsStore *settings.Store, timeout time.Duration) *Client {
-	return &Client{
+func NewEmbedClient(settingsStore *settings.Store, timeout time.Duration) *EmbedClient {
+	return &EmbedClient{
 		settings:   settingsStore,
 		baseURL:    "https://generativelanguage.googleapis.com/v1beta",
 		httpClient: &http.Client{Timeout: timeout},
 	}
 }
 
-func (c *Client) Embed(ctx context.Context, text string) ([]float64, error) {
+func (c *EmbedClient) Embed(ctx context.Context, text string) ([]float64, error) {
 	current := c.settings.Snapshot()
 
 	payload := map[string]any{
 		"model": fmt.Sprintf("models/%s", current.EmbeddingModel),
 		"content": map[string]any{
-			"parts": []map[string]string{
-				{"text": text},
-			},
+			"parts": []map[string]string{{"text": text}},
 		},
 		"taskType": "RETRIEVAL_DOCUMENT",
 	}

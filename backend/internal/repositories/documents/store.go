@@ -1,4 +1,4 @@
-package store
+package documents
 
 import (
 	"context"
@@ -11,13 +11,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jian1990/notion-rag/backend/internal/models"
+	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
 )
 
 type Store struct {
 	path      string
 	mu        sync.RWMutex
-	documents []models.Document
+	documents []knowledge.Document
 }
 
 func New(path string) (*Store, error) {
@@ -28,7 +28,7 @@ func New(path string) (*Store, error) {
 	return s, nil
 }
 
-func (s *Store) Replace(ctx context.Context, documents []models.Document) error {
+func (s *Store) Replace(ctx context.Context, documents []knowledge.Document) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
@@ -38,11 +38,11 @@ func (s *Store) Replace(ctx context.Context, documents []models.Document) error 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	s.documents = append([]models.Document(nil), documents...)
+	s.documents = append([]knowledge.Document(nil), documents...)
 	return s.persistLocked()
 }
 
-func (s *Store) Search(ctx context.Context, query []float64, topK int, minSimilarity float64) ([]models.SearchResult, error) {
+func (s *Store) Search(ctx context.Context, query []float64, topK int, minSimilarity float64) ([]knowledge.SearchResult, error) {
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
@@ -52,7 +52,7 @@ func (s *Store) Search(ctx context.Context, query []float64, topK int, minSimila
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	results := make([]models.SearchResult, 0, len(s.documents))
+	results := make([]knowledge.SearchResult, 0, len(s.documents))
 	for _, doc := range s.documents {
 		if len(doc.Vector) == 0 {
 			continue
@@ -61,7 +61,7 @@ func (s *Store) Search(ctx context.Context, query []float64, topK int, minSimila
 		if score < minSimilarity {
 			continue
 		}
-		results = append(results, models.SearchResult{
+		results = append(results, knowledge.SearchResult{
 			Document:   doc,
 			Similarity: score,
 		})

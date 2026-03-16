@@ -3,7 +3,9 @@ FROM golang:1.26-alpine AS builder
 WORKDIR /app
 
 COPY go.mod ./
+COPY go.sum ./
 COPY cmd ./cmd
+COPY docs ./docs
 COPY internal ./internal
 
 RUN go build -o /bin/notion-rag ./cmd/server

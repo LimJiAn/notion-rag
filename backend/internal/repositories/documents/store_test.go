@@ -1,4 +1,4 @@
-package store
+package documents
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jian1990/notion-rag/backend/internal/models"
+	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
 )
 
 func TestSearch(t *testing.T) {
@@ -16,7 +16,7 @@ func TestSearch(t *testing.T) {
 	}
 
 	now := time.Now().UTC()
-	err = s.Replace(context.Background(), []models.Document{
+	err = s.Replace(context.Background(), []knowledge.Document{
 		{
 			ID:        "doc-1",
 			Title:     "alpha",

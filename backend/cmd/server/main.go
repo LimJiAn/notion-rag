@@ -7,10 +7,15 @@ import (
 	"os/signal"
 	"syscall"
 
+	_ "github.com/jian1990/notion-rag/backend/docs"
 	"github.com/jian1990/notion-rag/backend/internal/app"
 	"github.com/jian1990/notion-rag/backend/internal/config"
 )
 
+// @title Notion RAG API
+// @version 1.0.0
+// @description REST API for syncing Notion content, querying indexed knowledge, and managing runtime settings.
+// @BasePath /
 func main() {
 	cfg, err := config.Load()
 	if err != nil {

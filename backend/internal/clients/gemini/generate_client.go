@@ -1,4 +1,4 @@
-package generate
+package gemini
 
 import (
 	"bytes"
@@ -12,29 +12,25 @@ import (
 	"github.com/jian1990/notion-rag/backend/internal/settings"
 )
 
-type Client struct {
+type GenerateClient struct {
 	settings   *settings.Store
 	baseURL    string
 	httpClient *http.Client
 }
 
-func NewClient(settingsStore *settings.Store, timeout time.Duration) *Client {
-	return &Client{
+func NewGenerateClient(settingsStore *settings.Store, timeout time.Duration) *GenerateClient {
+	return &GenerateClient{
 		settings:   settingsStore,
 		baseURL:    "https://generativelanguage.googleapis.com/v1beta",
 		httpClient: &http.Client{Timeout: timeout},
 	}
 }
 
-func (c *Client) Answer(ctx context.Context, prompt string) (string, error) {
+func (c *GenerateClient) Answer(ctx context.Context, prompt string) (string, error) {
 	current := c.settings.Snapshot()
 	payload := map[string]any{
 		"contents": []map[string]any{
-			{
-				"parts": []map[string]string{
-					{"text": prompt},
-				},
-			},
+			{"parts": []map[string]string{{"text": prompt}}},
 		},
 	}
 
