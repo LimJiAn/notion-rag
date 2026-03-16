@@ -71,7 +71,7 @@ backend-run: env
 	cd backend && set -a && source ../.env && set +a && GOCACHE="$(GO_CACHE)" go run ./cmd/server
 
 swagger:
-	cd backend && $$(go env GOPATH)/bin/swag init -g cmd/server/main.go -o docs
+	cd backend && $$(go env GOPATH)/bin/swag init -g main.go -d cmd/server,internal -o docs
 
 frontend-install:
 	cd frontend && yarn install

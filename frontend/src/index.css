@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --color-ink-50: #f8f7f3;
+  --color-ink-100: #efede6;
+  --color-ink-200: #dfdbd0;
+  --color-ink-300: #c9c1b0;
+  --color-ink-500: #7d7464;
+  --color-ink-700: #3f3a32;
+  --color-ink-900: #1e1b17;
+  --color-moss-100: #dde7d5;
+  --color-moss-500: #52725f;
+  --color-moss-700: #2d4838;
+  --color-ember-100: #f7d8c9;
+  --color-ember-500: #c6643b;
+  --color-700: #8d4126;
+}
+
+@layer base {
+  * {
+    @apply border-ink-200;
+  }
+
+  body {
+    @apply min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(198,100,59,0.18),transparent_26%),radial-gradient(circle_at_top_right,rgba(82,114,95,0.2),transparent_22%),linear-gradient(135deg,#f4ede3,#f7f3ed_46%,#edf4ea)] text-ink-900 antialiased;
+  }
+
+  button,
+  input,
+  textarea {
+    @apply outline-none;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-[28px] border border-white/60 bg-white/70 shadow-[0_20px_60px_rgba(58,43,21,0.10)] backdrop-blur-xl;
+  }
+
+  .subtle-grid {
+    background-image:
+      linear-gradient(to right, rgba(63,58,50,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(63,58,50,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+}
