@@ -1,11 +1,11 @@
 basePath: /
 definitions:
-  httpapi.queryRequest:
+  requests.QueryRequest:
     properties:
       question:
         type: string
     type: object
-  httpapi.updateSettingsRequest:
+  requests.UpdateSettingsRequest:
     properties:
       embedding_model:
         type: string
@@ -18,6 +18,11 @@ definitions:
       notion_token:
         type: string
       notion_version:
+        type: string
+    type: object
+  responses.ErrorResponse:
+    properties:
+      error:
         type: string
     type: object
   settings.PublicValues:
@@ -55,7 +60,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/httpapi.queryRequest'
+          $ref: '#/definitions/requests.QueryRequest'
       produces:
       - application/json
       responses:
@@ -67,15 +72,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "502":
           description: Bad Gateway
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: Query indexed knowledge
       tags:
       - rag
@@ -103,7 +104,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/httpapi.updateSettingsRequest'
+          $ref: '#/definitions/requests.UpdateSettingsRequest'
       produces:
       - application/json
       responses:
@@ -115,9 +116,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: Update runtime settings
       tags:
       - settings
@@ -150,9 +149,7 @@ paths:
         "502":
           description: Bad Gateway
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: Sync Notion content
       tags:
       - rag

@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/httpapi.queryRequest"
+                            "$ref": "#/definitions/requests.QueryRequest"
                         }
                     }
                 ],
@@ -50,19 +50,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "502": {
                         "description": "Bad Gateway",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     }
                 }
@@ -106,7 +100,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/httpapi.updateSettingsRequest"
+                            "$ref": "#/definitions/requests.UpdateSettingsRequest"
                         }
                     }
                 ],
@@ -121,10 +115,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     }
                 }
@@ -172,10 +163,7 @@ const docTemplate = `{
                     "502": {
                         "description": "Bad Gateway",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     }
                 }
@@ -206,7 +194,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "httpapi.queryRequest": {
+        "requests.QueryRequest": {
             "type": "object",
             "properties": {
                 "question": {
@@ -214,7 +202,7 @@ const docTemplate = `{
                 }
             }
         },
-        "httpapi.updateSettingsRequest": {
+        "requests.UpdateSettingsRequest": {
             "type": "object",
             "properties": {
                 "embedding_model": {
@@ -233,6 +221,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "notion_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
                     "type": "string"
                 }
             }

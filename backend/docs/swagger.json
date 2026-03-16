@@ -28,7 +28,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/httpapi.queryRequest"
+                            "$ref": "#/definitions/requests.QueryRequest"
                         }
                     }
                 ],
@@ -43,19 +43,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "502": {
                         "description": "Bad Gateway",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     }
                 }
@@ -99,7 +93,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/httpapi.updateSettingsRequest"
+                            "$ref": "#/definitions/requests.UpdateSettingsRequest"
                         }
                     }
                 ],
@@ -114,10 +108,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     }
                 }
@@ -165,10 +156,7 @@
                     "502": {
                         "description": "Bad Gateway",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     }
                 }
@@ -199,7 +187,7 @@
         }
     },
     "definitions": {
-        "httpapi.queryRequest": {
+        "requests.QueryRequest": {
             "type": "object",
             "properties": {
                 "question": {
@@ -207,7 +195,7 @@
                 }
             }
         },
-        "httpapi.updateSettingsRequest": {
+        "requests.UpdateSettingsRequest": {
             "type": "object",
             "properties": {
                 "embedding_model": {
@@ -226,6 +214,14 @@
                     "type": "string"
                 },
                 "notion_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
                     "type": "string"
                 }
             }
