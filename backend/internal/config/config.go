@@ -37,7 +37,7 @@ func Load() (Config, error) {
 		DataDir:           dataDir,
 		StorePath:         filepath.Join(dataDir, "documents.json"),
 		NotionToken:       strings.TrimSpace(os.Getenv("NOTION_TOKEN")),
-		NotionVersion:     envOrDefault("NOTION_VERSION", "2022-06-28"),
+		NotionVersion:     envOrDefault("NOTION_VERSION", "2026-03-11"),
 		NotionRootPageIDs: splitCSV(os.Getenv("NOTION_ROOT_PAGE_IDS")),
 		GeminiAPIKey:      strings.TrimSpace(os.Getenv("GEMINI_API_KEY")),
 		EmbeddingModel:    envOrDefault("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001"),
