@@ -29,11 +29,11 @@ func NewServer(cfg config.Config) (*http.Server, error) {
 	embedClient := gemini.NewEmbedClient(settingsStore, cfg.RequestTimeout)
 	generateClient := gemini.NewGenerateClient(settingsStore, cfg.RequestTimeout)
 
+	gin.SetMode(gin.ReleaseMode)
+
 	ingestService := ingestservice.NewService(cfg, settingsStore, notionClient, embedClient, docStore)
 	ragService := ragservice.NewService(cfg, docStore, embedClient, generateClient)
 	apiServer := httpapi.NewServer(docStore, ingestService, ragService, settingsStore)
-
-	gin.SetMode(gin.ReleaseMode)
 
 	return &http.Server{
 		Addr:    cfg.HTTPAddr,

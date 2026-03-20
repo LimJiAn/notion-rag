@@ -14,8 +14,12 @@ export function buildNotionPageURL(pageID: string) {
   return `https://www.notion.so/${normalized}`;
 }
 
-export function openNotionPage(pageID: string) {
-  const url = buildNotionPageURL(pageID);
+export function resolveNotionURL(pageID: string, notionURL?: string) {
+  return notionURL || buildNotionPageURL(pageID);
+}
+
+export function openNotionPage(pageID: string, notionURL?: string) {
+  const url = resolveNotionURL(pageID, notionURL);
   if (!url) {
     return;
   }
@@ -36,4 +40,19 @@ export function formatDate(value?: string) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
+}
+
+export function formatConfidence(label?: "high" | "medium" | "low", score?: number) {
+  const percent = score ? Math.round(score * 100) : 0;
+
+  switch (label) {
+    case "high":
+      return `신뢰도 높음 ${percent}%`;
+    case "medium":
+      return `신뢰도 보통 ${percent}%`;
+    case "low":
+      return `신뢰도 낮음 ${percent}%`;
+    default:
+      return "신뢰도 정보 없음";
+  }
 }

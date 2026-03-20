@@ -4,7 +4,7 @@ import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Textarea } from "../../components/ui/textarea";
-import { buildNotionPageURL, formatDate, openNotionPage, trimSnippet } from "../../lib/format";
+import { formatConfidence, formatDate, openNotionPage, resolveNotionURL, trimSnippet } from "../../lib/format";
 import type { ChatMessage, SearchResult } from "../../lib/types";
 import { cn } from "../../lib/utils";
 
@@ -19,6 +19,7 @@ export function AssistantLayout({
   onQuestionChange,
   onQuestionSubmit,
   onSourceSelect,
+  onSuggestedQuestionSelect,
 }: {
   history: ChatMessage[];
   question: string;
@@ -30,8 +31,11 @@ export function AssistantLayout({
   onQuestionChange: (value: string) => void;
   onQuestionSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   onSourceSelect: (value: SearchResult) => void;
+  onSuggestedQuestionSelect: (value: string) => void;
 }) {
-  const selectedSourceURL = selectedSource ? buildNotionPageURL(selectedSource.document.page_id) : null;
+  const selectedSourceURL = selectedSource
+    ? resolveNotionURL(selectedSource.document.page_id, selectedSource.document.notion_url)
+    : null;
 
   return (
     <main className="grid flex-1 gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]">
@@ -83,9 +87,61 @@ export function AssistantLayout({
                 <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-ember-500">
                   {findRelatedQuestion(history, lastAssistantMessage.id) ?? "최근 답변"}
                 </p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge className={confidenceBadgeClass(lastAssistantMessage.confidenceLabel)}>
+                    {formatConfidence(lastAssistantMessage.confidenceLabel, lastAssistantMessage.confidenceScore)}
+                  </Badge>
+                  <Badge className={lastAssistantMessage.usedContext ? "bg-moss-100 text-moss-700" : "bg-ember-100 text-ember-700"}>
+                    {lastAssistantMessage.usedContext ? "근거 기반 답변" : "근거 부족"}
+                  </Badge>
+                </div>
                 <div className="whitespace-pre-wrap text-sm leading-7 text-ink-900">
                   {lastAssistantMessage.text}
                 </div>
+                {lastAssistantMessage.citations && lastAssistantMessage.citations.length > 0 ? (
+                  <div className="space-y-2 rounded-[24px] border border-ink-100 bg-white/75 p-4">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">
+                      핵심 근거
+                    </p>
+                    <div className="space-y-3">
+                      {lastAssistantMessage.citations.map((citation) => (
+                        <button
+                          className="block w-full rounded-2xl border border-ink-100 bg-white px-3 py-3 text-left transition hover:border-ember-200 hover:bg-ember-50/40"
+                          key={`${citation.page_id}-${citation.similarity}`}
+                          onClick={() => openNotionPage(citation.page_id, citation.notion_url)}
+                          type="button"
+                        >
+                          <div className="mb-1 flex items-center justify-between gap-3">
+                            <span className="text-sm font-medium text-ink-900">{citation.title || "Untitled"}</span>
+                            <Badge>similarity {citation.similarity.toFixed(3)}</Badge>
+                          </div>
+                          <p className="text-sm leading-6 text-ink-600">{citation.snippet}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                {lastAssistantMessage.followUpQuestions && lastAssistantMessage.followUpQuestions.length > 0 ? (
+                  <div className="space-y-2">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-ink-500">
+                      바로 이어서 질문하기
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {lastAssistantMessage.followUpQuestions.map((suggestion) => (
+                        <Button
+                          className="h-auto rounded-full px-4 py-2 text-left"
+                          key={suggestion}
+                          onClick={() => onSuggestedQuestionSelect(suggestion)}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          {suggestion}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             )}
           </CardContent>
@@ -111,7 +167,7 @@ export function AssistantLayout({
                     )}
                     key={`${item.document.page_id}-${item.document.title}-${item.similarity}`}
                     onClick={() => onSourceSelect(item)}
-                    onDoubleClick={() => openNotionPage(item.document.page_id)}
+                    onDoubleClick={() => openNotionPage(item.document.page_id, item.document.notion_url)}
                     type="button"
                   >
                     <div className="mb-2 flex items-start justify-between gap-4">
@@ -124,6 +180,9 @@ export function AssistantLayout({
                       <span>page_id: {item.document.page_id}</span>
                       <Badge>similarity {item.similarity.toFixed(3)}</Badge>
                     </div>
+                    {item.document.updated_at ? (
+                      <p className="mb-2 text-xs text-ink-500">updated {formatDate(item.document.updated_at)}</p>
+                    ) : null}
                     <p className="text-sm leading-6 text-ink-700">{trimSnippet(item.document.content)}</p>
                   </button>
                 ))}
@@ -154,7 +213,9 @@ export function AssistantLayout({
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => openNotionPage(selectedSource.document.page_id)}
+                      onClick={() =>
+                        openNotionPage(selectedSource.document.page_id, selectedSource.document.notion_url)
+                      }
                       type="button"
                     >
                       Notion에서 열기
@@ -222,4 +283,17 @@ function findRelatedQuestion(history: ChatMessage[], assistantId: string) {
     }
   }
   return null;
+}
+
+function confidenceBadgeClass(label?: "high" | "medium" | "low") {
+  switch (label) {
+    case "high":
+      return "bg-moss-100 text-moss-700";
+    case "medium":
+      return "bg-amber-100 text-amber-700";
+    case "low":
+      return "bg-ember-100 text-ember-700";
+    default:
+      return "";
+  }
 }

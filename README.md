@@ -80,6 +80,7 @@ make env
 - `NOTION_TOKEN`
 - `NOTION_ROOT_PAGE_IDS`
 - `GEMINI_API_KEY`
+- `VITE_API_BASE_URL`
 
 `NOTION_ROOT_PAGE_IDS`에는 Notion 페이지 UUID를 넣어야 합니다.
 
@@ -87,6 +88,7 @@ make env
 
 ```env
 NOTION_ROOT_PAGE_IDS=2d105bf2-ff64-80c6-9fd9-eb2f39a07bc8
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 주의:
@@ -120,6 +122,7 @@ make restart
 - OpenAPI JSON: `http://localhost:8080/swagger/doc.json`
 
 프론트의 `Settings` 탭에서도 Notion/Gemini 설정을 수정할 수 있습니다.
+프론트에서 백엔드를 호출하는 주소는 `VITE_API_BASE_URL`로 설정합니다.
 
 ## Makefile 커맨드
 

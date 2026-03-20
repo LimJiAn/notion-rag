@@ -9,13 +9,29 @@ export type SearchResult = {
     title: string;
     page_id: string;
     content: string;
+    chunk: number;
+    notion_url?: string;
+    updated_at?: string;
   };
+};
+
+export type Citation = {
+  title: string;
+  page_id: string;
+  snippet: string;
+  notion_url?: string;
+  similarity: number;
 };
 
 export type QueryResponse = {
   question: string;
   answer: string;
   results: SearchResult[];
+  citations: Citation[];
+  confidence_score: number;
+  confidence_label: "high" | "medium" | "low";
+  used_context: boolean;
+  follow_up_questions: string[];
 };
 
 export type ChatMessage = {
@@ -24,6 +40,11 @@ export type ChatMessage = {
   text: string;
   createdAt: string;
   results?: SearchResult[];
+  citations?: Citation[];
+  confidenceScore?: number;
+  confidenceLabel?: "high" | "medium" | "low";
+  usedContext?: boolean;
+  followUpQuestions?: string[];
 };
 
 export type HealthStatus = "loading" | "online" | "offline";

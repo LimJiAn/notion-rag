@@ -108,6 +108,7 @@ export function App() {
             onQuestionChange={chat.setQuestion}
             onQuestionSubmit={chat.submitQuestion}
             onSourceSelect={chat.setSelectedSource}
+            onSuggestedQuestionSelect={chat.applySuggestedQuestion}
             queryStatus={chat.queryStatus}
             question={chat.question}
             selectedSource={chat.selectedSource}

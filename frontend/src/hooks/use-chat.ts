@@ -51,11 +51,22 @@ export function useChat() {
         text: payload.answer,
         createdAt: new Date().toISOString(),
         results: payload.results,
+        citations: payload.citations,
+        confidenceScore: payload.confidence_score,
+        confidenceLabel: payload.confidence_label,
+        usedContext: payload.used_context,
+        followUpQuestions: payload.follow_up_questions,
       };
 
       setHistory((current) => [...current, assistantMessage]);
       setSelectedSource(payload.results[0] ?? null);
-      setQueryStatus(`${payload.results.length}개의 관련 문서를 기반으로 답변 생성 완료`);
+      if (payload.used_context) {
+        setQueryStatus(
+          `${payload.results.length}개의 관련 문서를 바탕으로 답변 생성 완료 (${translateConfidenceLabel(payload.confidence_label)})`,
+        );
+      } else {
+        setQueryStatus("직접적인 근거를 찾지 못해 질문을 더 구체화하도록 안내했습니다.");
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "질의 실패";
       setQueryStatus(message);
@@ -79,6 +90,10 @@ export function useChat() {
     window.localStorage.removeItem(SESSION_STORAGE_KEY);
   }
 
+  function applySuggestedQuestion(value: string) {
+    setQuestion(value);
+  }
+
   return {
     question,
     setQuestion,
@@ -91,6 +106,7 @@ export function useChat() {
     visibleResults: lastAssistantMessage?.results ?? [],
     submitQuestion,
     clearHistory,
+    applySuggestedQuestion,
   };
 }
 
@@ -109,5 +125,16 @@ function loadHistory(): ChatMessage[] {
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
+  }
+}
+
+function translateConfidenceLabel(label: "high" | "medium" | "low") {
+  switch (label) {
+    case "high":
+      return "신뢰도 높음";
+    case "medium":
+      return "신뢰도 보통";
+    case "low":
+      return "신뢰도 낮음";
   }
 }
