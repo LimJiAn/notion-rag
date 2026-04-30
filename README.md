@@ -140,11 +140,15 @@ make test
 make fmt
 make swagger
 make frontend-install
+make frontend-ensure
 make frontend-build
 make frontend-dev
 make backend-run
+make backend-run BACKEND_PORT=8081
 make compose-config
 make clean
+make clean-deps
+make clean-data
 ```
 
 ## API 예시
@@ -212,12 +216,22 @@ curl -X PUT http://localhost:8080/api/v1/settings \
 make backend-run
 ```
 
+로컬 실행 시 백엔드는 `.env`를 읽되, Docker 전용 경로인 `/app/data` 대신 프로젝트 루트의 `.local-data`를 사용합니다.
+8080 포트가 이미 사용 중이면 아래처럼 포트를 바꿀 수 있습니다.
+Docker Compose 서비스가 이미 떠 있다면 `make down`으로 내린 뒤 실행해도 됩니다.
+
+```bash
+make backend-run BACKEND_PORT=8081
+```
+
 프론트 개발 서버 실행:
 
 ```bash
-make frontend-install
 make frontend-dev
 ```
+
+`make frontend-dev`와 `make frontend-build`는 `node_modules/.bin/vite`가 없으면 `yarn install --frozen-lockfile`을 먼저 실행합니다.
+의존성을 강제로 다시 설치하려면 `make frontend-install`을 사용합니다.
 
 Swagger 문서 재생성:
 

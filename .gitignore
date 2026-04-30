@@ -27,6 +27,7 @@ go.work.sum
 # env file
 .env
 .gocache/
+.local-data/
 frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
