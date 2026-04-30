@@ -16,16 +16,16 @@ const variantClasses: Record<ButtonVariant, string> = {
   default:
     "bg-ink-900 text-white hover:bg-ink-700 disabled:bg-ink-300 disabled:text-white/80",
   secondary:
-    "bg-ember-500 text-white hover:bg-700 disabled:bg-ember-100 disabled:text-ink-500",
+    "bg-ember-500 text-white hover:bg-ember-700 disabled:bg-ember-100 disabled:text-ink-500",
   outline:
-    "border border-ink-200 bg-white/70 text-ink-900 hover:bg-white disabled:text-ink-300",
-  ghost: "bg-transparent text-ink-500 hover:bg-white/60 hover:text-ink-900",
+    "border border-ink-200 bg-white text-ink-900 hover:bg-ink-50 disabled:text-ink-300",
+  ghost: "bg-transparent text-ink-500 hover:bg-ink-50 hover:text-ink-900",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  default: "h-11 px-4 text-sm",
-  sm: "h-9 px-3 text-sm",
-  lg: "h-12 px-5 text-sm",
+  default: "h-10 px-3 text-sm",
+  sm: "h-8 px-2.5 text-xs",
+  lg: "h-11 px-4 text-sm",
 };
 
 export function Button({
@@ -38,7 +38,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-2xl font-display font-semibold transition disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center gap-2 rounded-md font-medium transition disabled:cursor-not-allowed",
         variantClasses[variant],
         sizeClasses[size],
         className,

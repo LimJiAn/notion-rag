@@ -26,15 +26,13 @@ export function SettingsLayout({
   onSaveAndSync: () => Promise<void>;
 }) {
   return (
-    <main className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_360px]">
-      <Card className="p-6">
-        <CardHeader className="pb-5">
+    <main className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_360px]">
+      <Card className="p-4">
+        <CardHeader className="border-b border-ink-100 pb-3">
           <CardTitle>API 설정</CardTitle>
-          <CardDescription>
-            입력한 값은 브라우저가 아니라 백엔드 데이터 볼륨에 저장됩니다. 비워 두면 기존 비밀값은 유지됩니다.
-          </CardDescription>
+          <CardDescription>Backend data volume</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-5 p-0">
+        <CardContent className="space-y-4 p-0 pt-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Notion Token">
               <Input
@@ -95,7 +93,7 @@ export function SettingsLayout({
             </Field>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 border-t border-ink-100 pt-4">
             <Button disabled={savingSettings} onClick={() => void onSave()} type="button">
               {savingSettings ? "저장 중..." : "설정 저장"}
             </Button>
@@ -109,16 +107,16 @@ export function SettingsLayout({
             </Button>
           </div>
 
-          <p className="text-sm text-ink-500">{settingsStatus}</p>
+          <p className="rounded-md bg-ink-50 px-3 py-2 text-sm text-ink-500">{settingsStatus}</p>
         </CardContent>
       </Card>
 
-      <Card className="p-6">
-        <CardHeader className="pb-5">
+      <Card className="p-4">
+        <CardHeader className="border-b border-ink-100 pb-3">
           <CardTitle>설정 상태</CardTitle>
-          <CardDescription>현재 백엔드 런타임에 반영된 설정입니다.</CardDescription>
+          <CardDescription>Runtime values</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3 p-0">
+        <CardContent className="space-y-2 p-0 pt-4">
           <StatusItem label="Notion Token" value={settingsMeta?.notion_token_set ? "Configured" : "Missing"} />
           <StatusItem
             label="Gemini API Key"
@@ -147,7 +145,7 @@ function Field({
 }) {
   return (
     <label className={cn("space-y-2", className)}>
-      <span className="font-display text-sm font-semibold text-ink-700">{label}</span>
+      <span className="text-sm font-medium text-ink-700">{label}</span>
       {children}
     </label>
   );
@@ -155,9 +153,9 @@ function Field({
 
 function StatusItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-[24px] border border-ink-100 bg-white/80 px-4 py-4">
+    <div className="flex items-center justify-between gap-4 rounded-md border border-ink-100 bg-white px-3 py-3">
       <span className="text-sm text-ink-500">{label}</span>
-      <span className="font-display text-sm font-semibold text-ink-900">{value}</span>
+      <span className="truncate text-sm font-semibold text-ink-900">{value}</span>
     </div>
   );
 }
