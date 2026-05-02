@@ -48,7 +48,28 @@ export function AssistantLayout({
         <CardContent className="flex flex-1 flex-col gap-4 p-0 pt-4">
           <div className="flex-1 space-y-2 overflow-auto pr-1">
             {history.length === 0 ? (
-              <EmptyState>질문을 입력하면 대화가 이곳에 쌓입니다.</EmptyState>
+              <EmptyState>
+                <div className="space-y-4">
+                  <div>
+                    <p className="font-medium text-ink-900">질문을 시작하세요</p>
+                    <p className="mt-1 text-sm text-ink-500">
+                      Notion에서 찾은 근거를 함께 보여주기 때문에 답변 출처를 바로 확인할 수 있습니다.
+                    </p>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {STARTER_QUESTIONS.map((item) => (
+                      <button
+                        className="rounded-md border border-ink-100 bg-white px-3 py-2 text-left text-xs font-medium leading-5 text-ink-700 transition hover:border-ember-100 hover:bg-ember-100/50"
+                        key={item}
+                        onClick={() => onSuggestedQuestionSelect(item)}
+                        type="button"
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </EmptyState>
             ) : (
               history.map((message) => <MessageItem key={message.id} message={message} />)
             )}
@@ -237,6 +258,12 @@ export function AssistantLayout({
     </main>
   );
 }
+
+const STARTER_QUESTIONS = [
+  "최근 정리한 업무를 요약해줘",
+  "중요한 액션 아이템만 찾아줘",
+  "프로젝트별로 기억해야 할 내용을 묶어줘",
+];
 
 function MessageItem({ message }: { message: ChatMessage }) {
   return (

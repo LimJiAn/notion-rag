@@ -8,6 +8,7 @@
   --color-ink-200: #d1d5db;
   --color-ink-300: #9ca3af;
   --color-ink-500: #6b7280;
+  --color-ink-600: #4b5563;
   --color-ink-700: #374151;
   --color-ink-900: #111827;
   --color-moss-100: #dcfce7;
@@ -35,11 +36,37 @@
 }
 
 @layer components {
+  .app-bg {
+    background:
+      radial-gradient(circle at 16% 8%, rgb(37 99 235 / 0.10), transparent 28rem),
+      radial-gradient(circle at 84% 12%, rgb(22 163 74 / 0.08), transparent 24rem),
+      linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
+  }
+
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 520px) {
+    .app-layout {
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .app-layout {
+      grid-template-columns: 270px minmax(0, 1fr);
+    }
+  }
+
   .surface {
     @apply rounded-lg border border-ink-100 bg-white shadow-sm;
   }
 
   .subtle-grid {
-    background-image: none;
+    background-image:
+      linear-gradient(rgb(17 24 39 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(17 24 39 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 }

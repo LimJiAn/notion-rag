@@ -1,6 +1,25 @@
 export type Stats = {
   documents?: number;
   last_updated?: string;
+  vector_store?: "file" | "weaviate" | string;
+  collection?: string;
+  weaviate_url?: string;
+  status?: "ready" | "unavailable" | string;
+  error?: string;
+};
+
+export type KnowledgeDocument = {
+  title: string;
+  page_id: string;
+  content: string;
+  chunk: number;
+  notion_url?: string;
+  updated_at?: string;
+};
+
+export type DocumentsResponse = {
+  count: number;
+  documents: KnowledgeDocument[];
 };
 
 export type SearchResult = {

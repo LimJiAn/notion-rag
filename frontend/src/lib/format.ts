@@ -1,9 +1,9 @@
-export function trimSnippet(value: string) {
+export function trimSnippet(value: string, max = 240) {
   const clean = value.replace(/\s+/g, " ").trim();
-  if (clean.length <= 240) {
+  if (clean.length <= max) {
     return clean;
   }
-  return `${clean.slice(0, 240)}...`;
+  return `${clean.slice(0, max)}...`;
 }
 
 export function buildNotionPageURL(pageID: string) {

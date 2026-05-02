@@ -1,4 +1,4 @@
-import type { QueryResponse, SettingsResponse, Stats } from "./types";
+import type { DocumentsResponse, QueryResponse, SettingsResponse, Stats } from "./types";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8080").replace(/\/+$/, "");
 
@@ -20,6 +20,14 @@ export async function getStats() {
     throw new Error("stats request failed");
   }
   return (await response.json()) as Stats;
+}
+
+export async function getDocuments(limit = 25) {
+  const response = await fetch(apiURL(`/api/v1/documents?limit=${limit}`));
+  if (!response.ok) {
+    throw new Error("documents request failed");
+  }
+  return (await response.json()) as DocumentsResponse;
 }
 
 export async function syncNotion() {
