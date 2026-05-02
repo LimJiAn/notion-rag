@@ -10,12 +10,11 @@ import (
 	"github.com/jian1990/notion-rag/backend/internal/clients/gemini"
 	"github.com/jian1990/notion-rag/backend/internal/config"
 	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
-	"github.com/jian1990/notion-rag/backend/internal/repositories/documents"
 )
 
 type Service struct {
 	cfg      config.Config
-	store    *documents.Store
+	store    knowledge.Store
 	embed    *gemini.EmbedClient
 	generate *gemini.GenerateClient
 }
@@ -53,7 +52,7 @@ type Answer struct {
 	FollowUpQuestions []string       `json:"follow_up_questions"`
 }
 
-func NewService(cfg config.Config, store *documents.Store, embedClient *gemini.EmbedClient, generateClient *gemini.GenerateClient) *Service {
+func NewService(cfg config.Config, store knowledge.Store, embedClient *gemini.EmbedClient, generateClient *gemini.GenerateClient) *Service {
 	return &Service{
 		cfg:      cfg,
 		store:    store,

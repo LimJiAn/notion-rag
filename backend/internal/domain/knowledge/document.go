@@ -1,6 +1,9 @@
 package knowledge
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Document struct {
 	ID        string            `json:"id"`
@@ -16,4 +19,11 @@ type Document struct {
 type SearchResult struct {
 	Document   Document `json:"document"`
 	Similarity float64  `json:"similarity"`
+}
+
+type Store interface {
+	Replace(ctx context.Context, documents []Document) error
+	Search(ctx context.Context, query []float64, topK int, minSimilarity float64) ([]SearchResult, error)
+	List(ctx context.Context, limit int) ([]Document, error)
+	Stats() map[string]any
 }

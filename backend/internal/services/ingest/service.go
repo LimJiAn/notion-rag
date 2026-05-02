@@ -11,7 +11,6 @@ import (
 	"github.com/jian1990/notion-rag/backend/internal/clients/notion"
 	"github.com/jian1990/notion-rag/backend/internal/config"
 	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
-	"github.com/jian1990/notion-rag/backend/internal/repositories/documents"
 	"github.com/jian1990/notion-rag/backend/internal/settings"
 )
 
@@ -20,10 +19,10 @@ type Service struct {
 	settings *settings.Store
 	notion   *notion.Client
 	embed    *gemini.EmbedClient
-	store    *documents.Store
+	store    knowledge.Store
 }
 
-func NewService(cfg config.Config, settingsStore *settings.Store, notionClient *notion.Client, embedClient *gemini.EmbedClient, store *documents.Store) *Service {
+func NewService(cfg config.Config, settingsStore *settings.Store, notionClient *notion.Client, embedClient *gemini.EmbedClient, store knowledge.Store) *Service {
 	return &Service{
 		cfg:      cfg,
 		settings: settingsStore,

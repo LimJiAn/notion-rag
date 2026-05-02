@@ -8,6 +8,41 @@
     },
     "basePath": "/",
     "paths": {
+        "/api/v1/documents": {
+            "get": {
+                "description": "Returns recent indexed Notion chunks without exposing embedding vectors",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge"
+                ],
+                "summary": "List indexed documents",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of documents to return",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/query": {
             "post": {
                 "description": "Searches indexed Notion chunks and generates an answer",

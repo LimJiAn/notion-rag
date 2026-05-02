@@ -6,8 +6,9 @@ GO_CACHE := $(CURDIR)/.gocache
 LOCAL_DATA_DIR := $(CURDIR)/.local-data
 BACKEND_PORT ?= 8080
 LOCAL_HTTP_ADDR ?= :$(BACKEND_PORT)
+WEAVIATE_HTTP_PORT ?= 8081
 
-.PHONY: help env up down build logs ps restart sync query test fmt backend-test compose-config frontend-install frontend-ensure frontend-build frontend-dev backend-run swagger clean clean-deps clean-data
+.PHONY: help env up down build logs ps restart sync query test fmt backend-test compose-config frontend-install frontend-ensure frontend-build frontend-dev backend-run swagger weaviate-ready weaviate-meta clean clean-deps clean-data
 
 help:
 	@echo "Targets:"
@@ -25,6 +26,8 @@ help:
 	@echo "  make backend-run                 # run backend locally with .local-data"
 	@echo "  make backend-run BACKEND_PORT=8081 # run backend on another port"
 	@echo "  make swagger                     # regenerate Swagger docs"
+	@echo "  make weaviate-ready              # check local Weaviate readiness"
+	@echo "  make weaviate-meta               # show local Weaviate metadata"
 	@echo "  make frontend-install            # install frontend deps with yarn"
 	@echo "  make frontend-ensure             # install frontend deps only when missing"
 	@echo "  make frontend-build              # build frontend locally"
@@ -82,7 +85,14 @@ backend-run: env
 	cd backend && set -a && source ../.env && set +a && DATA_DIR="$(LOCAL_DATA_DIR)" HTTP_ADDR="$(LOCAL_HTTP_ADDR)" GOCACHE="$(GO_CACHE)" go run ./cmd/server
 
 swagger:
-	cd backend && $$(go env GOPATH)/bin/swag init -g main.go -d cmd/server,internal -o docs
+	mkdir -p "$(GO_CACHE)"
+	cd backend && GOCACHE="$(GO_CACHE)" $$(go env GOPATH)/bin/swag init -g main.go -d cmd/server,internal -o docs
+
+weaviate-ready:
+	curl -f http://localhost:$(WEAVIATE_HTTP_PORT)/v1/.well-known/ready
+
+weaviate-meta:
+	curl http://localhost:$(WEAVIATE_HTTP_PORT)/v1/meta
 
 frontend-install:
 	cd frontend && yarn install --frozen-lockfile

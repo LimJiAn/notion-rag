@@ -78,6 +78,27 @@ func (s *Store) Search(ctx context.Context, query []float64, topK int, minSimila
 	return results, nil
 }
 
+func (s *Store) List(ctx context.Context, limit int) ([]knowledge.Document, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	documents := append([]knowledge.Document(nil), s.documents...)
+	sort.SliceStable(documents, func(i, j int) bool {
+		return documents[i].UpdatedAt.After(documents[j].UpdatedAt)
+	})
+
+	if limit > 0 && len(documents) > limit {
+		documents = documents[:limit]
+	}
+	return documents, nil
+}
+
 func (s *Store) Stats() map[string]any {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -90,6 +111,7 @@ func (s *Store) Stats() map[string]any {
 	return map[string]any{
 		"documents":    len(s.documents),
 		"last_updated": lastUpdated,
+		"vector_store": "file",
 	}
 }
 

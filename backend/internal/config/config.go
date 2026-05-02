@@ -14,6 +14,9 @@ type Config struct {
 	HTTPAddr          string
 	DataDir           string
 	StorePath         string
+	VectorStore       string
+	WeaviateURL       string
+	WeaviateClassName string
 	NotionToken       string
 	NotionVersion     string
 	NotionRootPageIDs []string
@@ -36,6 +39,9 @@ func Load() (Config, error) {
 		HTTPAddr:          envOrDefault("HTTP_ADDR", ":8080"),
 		DataDir:           dataDir,
 		StorePath:         filepath.Join(dataDir, "documents.json"),
+		VectorStore:       strings.ToLower(envOrDefault("VECTOR_STORE", "file")),
+		WeaviateURL:       envOrDefault("WEAVIATE_URL", "http://localhost:8081"),
+		WeaviateClassName: envOrDefault("WEAVIATE_CLASS_NAME", "NotionChunk"),
 		NotionToken:       strings.TrimSpace(os.Getenv("NOTION_TOKEN")),
 		NotionVersion:     envOrDefault("NOTION_VERSION", "2026-03-11"),
 		NotionRootPageIDs: splitCSV(os.Getenv("NOTION_ROOT_PAGE_IDS")),
@@ -62,6 +68,12 @@ func Load() (Config, error) {
 	}
 	if cfg.ChunkOverlap >= cfg.ChunkSize {
 		return Config{}, fmt.Errorf("CHUNK_OVERLAP must be smaller than CHUNK_SIZE")
+	}
+	if cfg.VectorStore != "file" && cfg.VectorStore != "weaviate" {
+		return Config{}, fmt.Errorf("VECTOR_STORE must be either file or weaviate")
+	}
+	if cfg.VectorStore == "weaviate" && strings.TrimSpace(cfg.WeaviateURL) == "" {
+		return Config{}, errors.New("WEAVIATE_URL is required when VECTOR_STORE=weaviate")
 	}
 
 	return cfg, nil

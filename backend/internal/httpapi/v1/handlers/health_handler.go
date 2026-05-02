@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jian1990/notion-rag/backend/internal/repositories/documents"
+	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
 )
 
 type HealthHandler struct {
-	store *documents.Store
+	store knowledge.Store
 }
 
 func NewHealthHandler(deps Dependencies) *HealthHandler {

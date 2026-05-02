@@ -49,6 +49,30 @@ info:
   title: Notion RAG API
   version: 1.0.0
 paths:
+  /api/v1/documents:
+    get:
+      description: Returns recent indexed Notion chunks without exposing embedding
+        vectors
+      parameters:
+      - description: Maximum number of documents to return
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: List indexed documents
+      tags:
+      - knowledge
   /api/v1/query:
     post:
       consumes:

@@ -7,15 +7,17 @@ import (
 	"github.com/jian1990/notion-rag/backend/internal/clients/gemini"
 	"github.com/jian1990/notion-rag/backend/internal/clients/notion"
 	"github.com/jian1990/notion-rag/backend/internal/config"
+	"github.com/jian1990/notion-rag/backend/internal/domain/knowledge"
 	"github.com/jian1990/notion-rag/backend/internal/httpapi"
 	"github.com/jian1990/notion-rag/backend/internal/repositories/documents"
+	weaviatestore "github.com/jian1990/notion-rag/backend/internal/repositories/weaviate"
 	ingestservice "github.com/jian1990/notion-rag/backend/internal/services/ingest"
 	ragservice "github.com/jian1990/notion-rag/backend/internal/services/rag"
 	"github.com/jian1990/notion-rag/backend/internal/settings"
 )
 
 func NewServer(cfg config.Config) (*http.Server, error) {
-	docStore, err := documents.New(cfg.StorePath)
+	docStore, err := newDocumentStore(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -39,4 +41,11 @@ func NewServer(cfg config.Config) (*http.Server, error) {
 		Addr:    cfg.HTTPAddr,
 		Handler: apiServer.Engine(),
 	}, nil
+}
+
+func newDocumentStore(cfg config.Config) (knowledge.Store, error) {
+	if cfg.VectorStore == "weaviate" {
+		return weaviatestore.New(cfg.WeaviateURL, cfg.WeaviateClassName, cfg.RequestTimeout)
+	}
+	return documents.New(cfg.StorePath)
 }

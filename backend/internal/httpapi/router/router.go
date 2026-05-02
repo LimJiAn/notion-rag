@@ -16,6 +16,7 @@ func New(deps v1handlers.Dependencies) *gin.Engine {
 	healthHandler := v1handlers.NewHealthHandler(deps)
 	ragHandler := v1handlers.NewRAGHandler(deps)
 	settingsHandler := v1handlers.NewSettingsHandler(deps)
+	knowledgeHandler := v1handlers.NewKnowledgeHandler(deps)
 
 	engine.GET("/healthz", healthHandler.GetHealth)
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -25,6 +26,7 @@ func New(deps v1handlers.Dependencies) *gin.Engine {
 		v1.GET("/stats", healthHandler.GetStats)
 		v1.POST("/sync", ragHandler.Sync)
 		v1.POST("/query", ragHandler.Query)
+		v1.GET("/documents", knowledgeHandler.ListDocuments)
 		v1.GET("/settings", settingsHandler.Get)
 		v1.PUT("/settings", settingsHandler.Update)
 	}
